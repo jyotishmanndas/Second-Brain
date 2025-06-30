@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signInschema = exports.signUpSchema = void 0;
+exports.contentSchema = exports.signInschema = exports.signUpSchema = void 0;
 const zod_1 = require("zod");
 exports.signUpSchema = zod_1.z.object({
     email: zod_1.z.string().email({ message: "Invalid email format" }),
@@ -22,4 +22,9 @@ exports.signInschema = zod_1.z.object({
         .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
         .regex(/[0-9]/, { message: 'Password must contain at least one number' })
         .regex(/[@$!%*?&]/, { message: 'Password must contain at least one special character' }),
+});
+exports.contentSchema = zod_1.z.object({
+    title: zod_1.z.string().min(1, { message: "Title is required" }),
+    link: zod_1.z.string().url().min(1, { message: "Invalid url" }),
+    tags: zod_1.z.array(zod_1.z.string()).min(1, { message: "Atleat one tag is required" })
 });

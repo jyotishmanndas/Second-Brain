@@ -1,8 +1,9 @@
 import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { signInschema, signUpSchema } from "./zod";
+import { contentSchema, signInschema, signUpSchema } from "./zod";
 import { prisma } from "./lib/db";
+import { JwtAuth } from "./middleware/jwtAuth";
 
 const app = express();
 app.use(express.json());
@@ -44,10 +45,10 @@ app.post("/signup", async (req: Request, res: Response) => {
 
         const userId = user.id;
 
-        const token = jwt.sign({ userId }, process.env.JWT_SECRET!)
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET as string)
         res.json({
             token
-        })
+        });
 
     } catch (error) {
         console.error("Error creating user:", error);
@@ -57,7 +58,7 @@ app.post("/signup", async (req: Request, res: Response) => {
     };
 });
 
-app.post("/signin", async (req, res) => {
+app.post("/signin", async (req: Request, res: Response) => {
 
     const result = signInschema.safeParse(req.body);
 
@@ -84,7 +85,7 @@ app.post("/signin", async (req, res) => {
                     msg: "Invalid password"
                 });
             } else {
-                const token = jwt.sign({ userId }, process.env.JWT_SECRET!);
+                const token = jwt.sign({ userId }, process.env.JWT_SECRET as string);
                 res.json({
                     token
                 });
@@ -102,6 +103,70 @@ app.post("/signin", async (req, res) => {
         });
     };
 });
+
+app.post("/content", JwtAuth, async (req: Request, res: Response) => {
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    };
+
+    const result = contentSchema.safeParse(req.body);
+
+    if (!result.success) {
+        res.status(400).json({ msg: "Invalid input" });
+        return;
+    };
+
+    try {
+        const content = await prisma.content.create({
+            data: {
+                title: result.data?.title,
+                link: result.data?.link,
+                tags: result.data?.tags,
+                userId: req.userId || ""
+            }
+        })
+
+        res.status(200).json({ msg: "Post created successfully", content })
+    } catch (error) {
+        console.error("Error creating room:", error);
+        res.status(500).json({ msg: "Internal server error" });
+    }
+});
+
+app.get("/allContent", JwtAuth, async (req: Request, res: Response) => {
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    };
+
+    const allContents = await prisma.content.findMany({
+        where: {
+            userId: req.userId
+        },
+        include: {
+            user: {
+                select: {
+                    name: true
+                }
+            }
+        }
+    });
+
+    res.status(200).json({ msg: "All contents", allContents });
+    return;
+})
+
 
 app.listen(3000, () => {
     console.log('Server is listening on the port 3000');

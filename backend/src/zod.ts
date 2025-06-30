@@ -22,3 +22,9 @@ export const signInschema = z.object({
         .regex(/[0-9]/, { message: 'Password must contain at least one number' })
         .regex(/[@$!%*?&]/, { message: 'Password must contain at least one special character' }),
 });
+
+export const contentSchema = z.object({
+    title: z.string().min(1, { message: "Title is required" }),
+    link: z.string().url().min(1, { message: "Invalid url" }),
+    tags: z.array(z.string()).min(1, { message: "Atleat one tag is required" })
+})

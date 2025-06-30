@@ -17,6 +17,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const zod_1 = require("./zod");
 const db_1 = require("./lib/db");
+const jwtAuth_1 = require("./middleware/jwtAuth");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -108,6 +109,62 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
     }
     ;
+}));
+app.post("/content", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    const user = yield db_1.prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    }
+    ;
+    const result = zod_1.contentSchema.safeParse(req.body);
+    if (!result.success) {
+        res.status(400).json({ msg: "Invalid input" });
+        return;
+    }
+    ;
+    try {
+        const content = yield db_1.prisma.content.create({
+            data: {
+                title: (_a = result.data) === null || _a === void 0 ? void 0 : _a.title,
+                link: (_b = result.data) === null || _b === void 0 ? void 0 : _b.link,
+                tags: (_c = result.data) === null || _c === void 0 ? void 0 : _c.tags,
+                userId: req.userId || ""
+            }
+        });
+        res.status(200).json({ msg: "Post created successfully", content });
+    }
+    catch (error) {
+        console.error("Error creating room:", error);
+        res.status(500).json({ msg: "Internal server error" });
+    }
+}));
+app.get("/allContent", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield db_1.prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    }
+    ;
+    const allContents = yield db_1.prisma.content.findMany({
+        where: {
+            userId: req.userId
+        },
+        include: {
+            user: {
+                select: {
+                    name: true
+                }
+            }
+        }
+    });
+    res.status(200).json({ msg: "All contents", allContents });
+    return;
 }));
 app.listen(3000, () => {
     console.log('Server is listening on the port 3000');
