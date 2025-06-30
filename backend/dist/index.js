@@ -18,7 +18,9 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const zod_1 = require("./zod");
 const db_1 = require("./lib/db");
 const jwtAuth_1 = require("./middleware/jwtAuth");
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

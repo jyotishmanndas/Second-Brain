@@ -4,8 +4,11 @@ import bcrypt from "bcryptjs";
 import { contentSchema, signInschema, signUpSchema } from "./zod";
 import { prisma } from "./lib/db";
 import { JwtAuth } from "./middleware/jwtAuth";
+import cors from "cors"
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
