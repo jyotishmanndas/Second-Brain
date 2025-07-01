@@ -1,21 +1,23 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { SignInPage } from "./pages/signinPage"
-import { SignUpPage } from "./pages/signupPage"
+import { Layout } from "./components/Layout"
+import { SignInPage } from "./pages/SigninPage"
+import { SignUpPage } from "./pages/SignupPage"
+import { Dashboard } from "./pages/Dashboard"
 
 
 function App() {
-
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/signin" element={<SignInPage />}></Route>
-          <Route path="/signup" element={<SignUpPage />}></Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
 
+        <Route path="/dashboard" element={<Layout />}>
+          <Route index element={<Dashboard />}></Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App
