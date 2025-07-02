@@ -1,5 +1,5 @@
 import { Brain, LogOut, Menu, User, } from "lucide-react"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { FaYoutube } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 import type { IconType } from "react-icons/lib";
@@ -43,7 +43,7 @@ export function Sidebar() {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Menu className="w-5 h-5 cursor-pointer" />
+                <Menu className="w-6 h-6 cursor-pointer" />
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px]">
                 <SheetHeader>

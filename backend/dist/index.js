@@ -19,6 +19,7 @@ const zod_1 = require("./zod");
 const db_1 = require("./lib/db");
 const jwtAuth_1 = require("./middleware/jwtAuth");
 const cors_1 = __importDefault(require("cors"));
+const nanoid_1 = require("nanoid");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -27,29 +28,28 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     var _a, _b, _c, _d;
     const result = zod_1.signUpSchema.safeParse(req.body);
     if (!result.success) {
-        res.status(400).json({
-            msg: "Invalid input"
-        });
+        res.status(400).json({ msg: "Invalid input" });
+        return;
     }
     ;
     try {
         const existingUser = yield db_1.prisma.user.findUnique({
-            where: {
-                email: (_a = result.data) === null || _a === void 0 ? void 0 : _a.email
-            }
+            where: { email: (_a = result.data) === null || _a === void 0 ? void 0 : _a.email }
         });
         if (existingUser) {
             res.status(400).json({
                 msg: "User already exists with this email"
             });
+            return;
         }
         ;
         const hashedpassword = yield bcryptjs_1.default.hash(((_b = result.data) === null || _b === void 0 ? void 0 : _b.password) || "", 12);
         const user = yield db_1.prisma.user.create({
             data: {
-                email: ((_c = result.data) === null || _c === void 0 ? void 0 : _c.email) || "",
+                email: (_c = result.data) === null || _c === void 0 ? void 0 : _c.email,
                 password: hashedpassword,
-                name: ((_d = result.data) === null || _d === void 0 ? void 0 : _d.name) || "",
+                name: (_d = result.data) === null || _d === void 0 ? void 0 : _d.name,
+                inviteCode: (0, nanoid_1.nanoid)(7),
                 emailVerified: new Date()
             }
         });
@@ -58,12 +58,12 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.json({
             token
         });
+        return;
     }
     catch (error) {
         console.error("Error creating user:", error);
-        res.status(500).json({
-            msg: "Internal server error"
-        });
+        res.status(500).json({ msg: "Internal server error" });
+        return;
     }
     ;
 }));
@@ -74,6 +74,7 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(400).json({
             msg: "Invalid input"
         });
+        return;
     }
     ;
     try {
@@ -84,17 +85,19 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
         const userId = existingUser === null || existingUser === void 0 ? void 0 : existingUser.id;
         if (existingUser) {
-            const isPasswordValid = yield bcryptjs_1.default.compare(((_b = result.data) === null || _b === void 0 ? void 0 : _b.password) || "", existingUser.password);
+            const isPasswordValid = yield bcryptjs_1.default.compare((_b = result.data) === null || _b === void 0 ? void 0 : _b.password, existingUser.password);
             if (!isPasswordValid) {
                 res.status(400).json({
                     msg: "Invalid password"
                 });
+                return;
             }
             else {
                 const token = jsonwebtoken_1.default.sign({ userId }, process.env.JWT_SECRET);
                 res.json({
                     token
                 });
+                return;
             }
             ;
         }
@@ -102,6 +105,7 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(400).json({
                 msg: "User does not exist with this email"
             });
+            return;
         }
     }
     catch (error) {
@@ -109,6 +113,7 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).json({
             msg: "Internal server error"
         });
+        return;
     }
     ;
 }));
@@ -138,10 +143,12 @@ app.post("/content", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, 
             }
         });
         res.status(200).json({ msg: "Post created successfully", content });
+        return;
     }
     catch (error) {
         console.error("Error creating room:", error);
         res.status(500).json({ msg: "Internal server error" });
+        return;
     }
 }));
 app.get("/allContent", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -167,6 +174,33 @@ app.get("/allContent", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0
     });
     res.status(200).json({ msg: "All contents", allContents });
     return;
+}));
+app.get("/invite/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const link = yield db_1.prisma.user.findUnique({
+        where: {
+            inviteCode: req.params.id
+        }
+    });
+    if (!link) {
+        res.status(400).json({ msg: "Invalid invite code" });
+        return;
+    }
+    ;
+    const content = yield db_1.prisma.content.findMany({
+        where: {
+            userId: link.id
+        },
+        include: {
+            user: {
+                select: {
+                    email: true
+                }
+            }
+        }
+    });
+    res.status(200).json({
+        content
+    });
 }));
 app.listen(3000, () => {
     console.log('Server is listening on the port 3000');

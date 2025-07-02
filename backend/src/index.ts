@@ -4,7 +4,8 @@ import bcrypt from "bcryptjs";
 import { contentSchema, signInschema, signUpSchema } from "./zod";
 import { prisma } from "./lib/db";
 import { JwtAuth } from "./middleware/jwtAuth";
-import cors from "cors"
+import cors from "cors";
+import { nanoid } from 'nanoid'
 
 const app = express();
 
@@ -17,31 +18,30 @@ app.post("/signup", async (req: Request, res: Response) => {
     const result = signUpSchema.safeParse(req.body);
 
     if (!result.success) {
-        res.status(400).json({
-            msg: "Invalid input"
-        })
+        res.status(400).json({ msg: "Invalid input" });
+        return;
     };
 
     try {
         const existingUser = await prisma.user.findUnique({
-            where: {
-                email: result.data?.email
-            }
+            where: { email: result.data?.email }
         });
 
         if (existingUser) {
             res.status(400).json({
                 msg: "User already exists with this email"
             });
+            return;
         };
 
         const hashedpassword = await bcrypt.hash(result.data?.password || "", 12)
 
         const user = await prisma.user.create({
             data: {
-                email: result.data?.email || "",
+                email: result.data?.email,
                 password: hashedpassword,
-                name: result.data?.name || "",
+                name: result.data?.name,
+                inviteCode: nanoid(10),
                 emailVerified: new Date()
             }
         });
@@ -52,12 +52,12 @@ app.post("/signup", async (req: Request, res: Response) => {
         res.json({
             token
         });
+        return;
 
     } catch (error) {
         console.error("Error creating user:", error);
-        res.status(500).json({
-            msg: "Internal server error"
-        });
+        res.status(500).json({ msg: "Internal server error" });
+        return;
     };
 });
 
@@ -69,6 +69,7 @@ app.post("/signin", async (req: Request, res: Response) => {
         res.status(400).json({
             msg: "Invalid input"
         });
+        return;
     };
 
     try {
@@ -81,29 +82,33 @@ app.post("/signin", async (req: Request, res: Response) => {
         const userId = existingUser?.id;
 
         if (existingUser) {
-            const isPasswordValid = await bcrypt.compare(result.data?.password || "", existingUser.password);
+            const isPasswordValid = await bcrypt.compare(result.data?.password, existingUser.password);
 
             if (!isPasswordValid) {
                 res.status(400).json({
                     msg: "Invalid password"
                 });
+                return;
             } else {
                 const token = jwt.sign({ userId }, process.env.JWT_SECRET as string);
                 res.json({
                     token
                 });
+                return;
             };
         }
         else {
             res.status(400).json({
                 msg: "User does not exist with this email"
             });
+            return;
         }
     } catch (error) {
         console.error("Error signing in user:", error);
         res.status(500).json({
             msg: "Internal server error"
         });
+        return;
     };
 });
 
@@ -135,10 +140,12 @@ app.post("/content", JwtAuth, async (req: Request, res: Response) => {
             }
         })
 
-        res.status(200).json({ msg: "Post created successfully", content })
+        res.status(200).json({ msg: "Post created successfully", content });
+        return;
     } catch (error) {
         console.error("Error creating room:", error);
         res.status(500).json({ msg: "Internal server error" });
+        return;
     }
 });
 
@@ -168,6 +175,39 @@ app.get("/allContent", JwtAuth, async (req: Request, res: Response) => {
 
     res.status(200).json({ msg: "All contents", allContents });
     return;
+});
+
+app.get("/invite/:id", async (req: Request, res: Response) => {
+
+    const link = await prisma.user.findUnique({
+        where: {
+            inviteCode: req.params.id
+        }
+    });
+
+    if (!link) {
+        res.status(400).json({ msg: "Invalid invite code" })
+        return;
+    };
+
+    const content = await prisma.content.findMany({
+        where: {
+            userId: link.id
+        },
+        include: {
+            user: {
+                select: {
+                    email: true
+                }
+            }
+        }
+    });
+
+    res.status(200).json({
+        content
+    })
+
+
 })
 
 

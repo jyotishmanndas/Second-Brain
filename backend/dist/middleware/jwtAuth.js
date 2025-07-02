@@ -6,7 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtAuth = JwtAuth;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function JwtAuth(req, res, next) {
-    const token = req.headers.authorization || "";
+    const token = req.headers.authorization;
+    if (!token) {
+        res.status(401).json({
+            msg: "Access denied. No valid token provided."
+        });
+        return;
+    }
+    ;
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         if (decoded.userId) {
