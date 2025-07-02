@@ -16,19 +16,19 @@ export const Links: SidebarLinks[] = [
     {
         id: 0,
         name: "Videos",
-        href: "/videos",
+        href: "/dashboard/youtube",
         icon: FaYoutube
     },
     {
         id: 1,
         name: "Tweets",
-        href: "/tweet",
+        href: "/dashboard/tweet",
         icon: FaTwitter
     },
     {
         id: 2,
         name: "Profile",
-        href: "/profile",
+        href: "/dashboard/profile",
         icon: User
     },
     {

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export function Dashboard() {
     const navigate = useNavigate();
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         const token = localStorage.getItem("token");

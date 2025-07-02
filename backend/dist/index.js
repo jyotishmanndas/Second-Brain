@@ -49,7 +49,7 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 email: (_c = result.data) === null || _c === void 0 ? void 0 : _c.email,
                 password: hashedpassword,
                 name: (_d = result.data) === null || _d === void 0 ? void 0 : _d.name,
-                inviteCode: (0, nanoid_1.nanoid)(7),
+                inviteCode: (0, nanoid_1.nanoid)(10),
                 emailVerified: new Date()
             }
         });

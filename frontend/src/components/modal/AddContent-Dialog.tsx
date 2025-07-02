@@ -1,12 +1,13 @@
 import type { z } from "zod";
 import { Button } from "../ui/button";
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import axios from "axios";
 import { contentSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export function AddContentDialog() {
 
@@ -21,11 +22,16 @@ export function AddContentDialog() {
 
   async function onSubmit(values: z.infer<typeof contentSchema>) {
     try {
-      console.log(values);
+      await axios.post(`http://localhost:3000/content`, values, {
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      });
+      form.reset()
+      toast.success("post create successfully");
 
     } catch (error) {
       console.log(error);
-    } finally {
     }
   }
   return (
@@ -33,7 +39,7 @@ export function AddContentDialog() {
       <DialogTrigger asChild>
         <Button variant="secondary" className="cursor-pointer">Open Dialog</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] w-[360px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Add Content</DialogTitle>
         </DialogHeader>
@@ -46,7 +52,7 @@ export function AddContentDialog() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input placeholder="title" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -58,7 +64,7 @@ export function AddContentDialog() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input placeholder="link" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -70,14 +76,18 @@ export function AddContentDialog() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input placeholder="tags" onChange={(e) => {
+                        field.onChange(e.target.value.split(",").map((tag) => tag.trim()))
+                      }} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <Button type="submit" className=" flex ml-auto">Submit</Button>
+            <Button type="submit" className="flex ml-auto cursor-pointer">
+              Submit
+            </Button>
           </form>
         </Form>
       </DialogContent>
