@@ -120,7 +120,7 @@ app.get("/auth/validate", JwtAuth, async (req: Request, res: Response) => {
         });
 
         if (!user) {
-            res.status(401).json({valid: false, msg: "Invalid token" });
+            res.status(401).json({ valid: false, msg: "Invalid token" });
             return
         } else {
             res.status(200).json({ valid: true });
@@ -195,6 +195,80 @@ app.get("/allContent", JwtAuth, async (req: Request, res: Response) => {
     });
 
     res.status(200).json({ msg: "All contents", allContents });
+    return;
+});
+
+app.put("/updateContent/:id", JwtAuth, async (req: Request, res: Response) => {
+    const user = await prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    };
+
+    const content = await prisma.content.findUnique({
+        where: {
+            id: req.params.id,
+        }
+    });
+
+    if (!content) {
+        res.status(400).json({ msg: "No such content availaible with this id" })
+        return;
+    };
+
+    const result = contentSchema.safeParse(req.body);
+
+    if (!result.success) {
+        res.status(400).json({ msg: "Invalid input" });
+        return;
+    };
+
+    await prisma.content.update({
+        where: {
+            id: req.params.id,
+        },
+        data: {
+            title: result.data?.title,
+            link: result.data?.link,
+            tags: result.data?.tags,
+        }
+    })
+    res.status(200).json({ msg: "Content updated successsfully" })
+    return;
+})
+
+app.delete("/deleteContent/:id", JwtAuth, async (req: Request, res: Response) => {
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    };
+
+    const content = await prisma.content.findUnique({
+        where: {
+            id: req.params.id,
+        }
+    });
+
+    if (!content) {
+        res.status(400).json({ msg: "No such content availaible with this id" })
+        return;
+    };
+
+    await prisma.content.delete({
+        where: {
+            id: req.params.id,
+            userId: req.userId
+        }
+    });
+    res.status(200).json({ msg: "Content delete successsfully" })
     return;
 });
 

@@ -1,17 +1,19 @@
+import { AddContentDialog } from "@/components/modal/AddContent-Dialog";
+import { DeleteContentModal } from "@/components/modal/DeleteContent-modal";
+import { EditContentDialog } from "@/components/modal/EditContent-modal";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useContent } from "@/hooks/useContent";
-import { CopyIcon, Edit, Trash } from "lucide-react";
+import { useState } from "react";
 import { FaYoutube } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 
 export function Dashboard() {
 
+    const [editing, setIsEditing] = useState(false);
+
     const { authenticated, loading } = useAuth();
     const { content } = useContent();
-
-    console.log('Dashboard render - loading:', loading, 'authenticated:', authenticated);
-    console.log('Content:', content);
 
     if (loading) {
         return (
@@ -19,15 +21,16 @@ export function Dashboard() {
                 <p className="text-xl font-semibold">Loading...</p>
             </div>
         );
-    }
+    };
+
     return (
         <>
             {authenticated && (
-                <div className="h-screen w-full flex flex-wrap justify-start gap-3 mt-20 pl-20">
+                <div className="h-screen w-full flex flex-wrap justify-start gap-3 pt-20 pl-20">
                     {content.map((content) => {
                         const youtube = content.link.includes("youtube.com");
                         const twitter = content.link.includes("twitter.com") || content.link.includes("x.com");
-                        
+
                         return (
                             <Card className="w-96 h-[400px]" key={content.id}>
                                 <CardHeader>
@@ -40,9 +43,8 @@ export function Dashboard() {
 
                                         <span className="text-center">{content.title}</span>
                                         <div className="flex gap-3">
-                                            <CopyIcon className="w-4 h-4" />
-                                            <Edit className="w-4 h-4" />
-                                            <Trash className="w-4 h-4" />
+                                            <EditContentDialog id={content.id} />
+                                            <DeleteContentModal id={content.id} />
                                         </div>
                                     </CardTitle>
                                 </CardHeader>
@@ -72,6 +74,10 @@ export function Dashboard() {
                             </Card>
                         )
                     })}
+
+                    {editing && (
+                        <AddContentDialog />
+                    )}
                 </div>
             )}
         </>

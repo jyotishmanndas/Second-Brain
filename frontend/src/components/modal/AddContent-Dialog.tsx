@@ -29,8 +29,9 @@ export function AddContentDialog() {
           Authorization: localStorage.getItem("token")
         }
       });
-      form.reset()
+      form.reset();
       toast.success("post create successfully");
+      window.location.reload();
 
     } catch (error) {
       console.log(error);
