@@ -8,6 +8,8 @@ import { contentSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+// import { Textarea } from "../ui/textarea";
+// import { Badge } from "../ui/badge";
 
 export function AddContentDialog() {
 
@@ -33,7 +35,10 @@ export function AddContentDialog() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  // const tags = form.watch("tags");
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -70,6 +75,11 @@ export function AddContentDialog() {
                   </FormItem>
                 )}
               />
+              {/* <div className="h-52 w-72 border">
+                {tags.map((tag)=>(
+                    <Badge key={tag}>{tag}</Badge>
+                ))}
+            </div> */}
               <FormField
                 control={form.control}
                 name="tags"

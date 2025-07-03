@@ -34,7 +34,7 @@ app.post("/signup", async (req: Request, res: Response) => {
             return;
         };
 
-        const hashedpassword = await bcrypt.hash(result.data?.password || "", 12)
+        const hashedpassword = await bcrypt.hash(result.data?.password, 12)
 
         const user = await prisma.user.create({
             data: {
@@ -110,6 +110,27 @@ app.post("/signin", async (req: Request, res: Response) => {
         });
         return;
     };
+});
+
+app.get("/auth/validate", JwtAuth, async (req: Request, res: Response) => {
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.userId }
+        });
+
+        if (!user) {
+            res.status(401).json({valid: false, msg: "Invalid token" });
+            return
+        } else {
+            res.status(200).json({ valid: true });
+            return
+        }
+    } catch (error) {
+        console.error("Error during auth validation:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
 });
 
 app.post("/content", JwtAuth, async (req: Request, res: Response) => {
@@ -206,8 +227,6 @@ app.get("/invite/:id", async (req: Request, res: Response) => {
     res.status(200).json({
         content
     })
-
-
 })
 
 

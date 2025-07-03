@@ -43,7 +43,7 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             return;
         }
         ;
-        const hashedpassword = yield bcryptjs_1.default.hash(((_b = result.data) === null || _b === void 0 ? void 0 : _b.password) || "", 12);
+        const hashedpassword = yield bcryptjs_1.default.hash((_b = result.data) === null || _b === void 0 ? void 0 : _b.password, 12);
         const user = yield db_1.prisma.user.create({
             data: {
                 email: (_c = result.data) === null || _c === void 0 ? void 0 : _c.email,
@@ -116,6 +116,26 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return;
     }
     ;
+}));
+app.get("/auth/validate", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield db_1.prisma.user.findUnique({
+            where: { id: req.userId }
+        });
+        if (!user) {
+            res.status(401).json({ valid: false, msg: "Invalid token" });
+            return;
+        }
+        else {
+            res.status(200).json({ valid: true });
+            return;
+        }
+    }
+    catch (error) {
+        console.error("Error during auth validation:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
 }));
 app.post("/content", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;

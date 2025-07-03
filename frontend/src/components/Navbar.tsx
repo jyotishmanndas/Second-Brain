@@ -4,7 +4,7 @@ import { Sidebar } from "./Sidebar";
 
 export function Navbar() {
     return (
-        <div className="w-full h-16 bg-amber-500 flex items-center px-4 justify-between fixed top-0 left-0">
+        <div className="w-full h-16 bg-white flex items-center px-4 justify-between fixed top-0 left-0">
             <Sidebar />
             <div className="flex items-center gap-4">
                 <InviteModal />
