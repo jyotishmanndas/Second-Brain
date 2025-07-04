@@ -45,26 +45,28 @@ export function Sidebar() {
             <SheetTrigger asChild>
                 <Menu className="w-6 h-6 cursor-pointer" />
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px]">
+            <SheetContent side="left" className="w-[300px] bg-[#eeeeef]">
                 <SheetHeader>
                     <SheetTitle className="flex items-center gap-4">
-                        <Brain className="h-10 w-10" />
-                        <span className="text-2xl font-bold">Brainly</span>
+                        <Brain className="h-10 w-10 text-[#262626]" />
+                        <span className="text-2xl font-bold text-[#262626]">Brainly</span>
                     </SheetTitle>
                 </SheetHeader>
-                {Links.map((link) => (
+               <div className="mt-6 flex flex-col gap-2 px-2">
+               {Links.map((link) => (
                     <a
                         key={link.id}
                         href={link.href}
                         className={cn(
-                            "flex items-center gap-5 text-xl text-red-400 py-2 px-6 mt-1 rounded-md transition-all border",
-                           location.pathname === link.href ? "text-green-300 bg-gray-300" : "text-yellow-300 hover:bg-red-600"
+                            "flex items-center gap-5 text-xl text-[#262626] py-2 px-6 mt-1 rounded-md transition-all",
+                           location.pathname === link.href ? "bg-[#404040] text-white" : "hover:bg-[#d4d4d4] hover:text-[#262626]"
                         )}
                     >
                         <link.icon className="size-7" />
                         {link.name}
                     </a>
                 ))}
+               </div>
             </SheetContent>
         </Sheet>
     )

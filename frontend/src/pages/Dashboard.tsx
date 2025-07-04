@@ -1,16 +1,12 @@
-import { AddContentDialog } from "@/components/modal/AddContent-Dialog";
 import { DeleteContentModal } from "@/components/modal/DeleteContent-modal";
 import { EditContentDialog } from "@/components/modal/EditContent-modal";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useContent } from "@/hooks/useContent";
-import { useState } from "react";
 import { FaYoutube } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 
 export function Dashboard() {
-
-    const [editing, setIsEditing] = useState(false);
 
     const { authenticated, loading } = useAuth();
     const { content } = useContent();
@@ -26,13 +22,13 @@ export function Dashboard() {
     return (
         <>
             {authenticated && (
-                <div className="h-screen w-full flex flex-wrap justify-start gap-3 pt-20 pl-20">
+                <div className="min-h-screen w-full flex flex-wrap justify-start gap-3 pt-20 pl-20 pb-10 bg-[#eeeeef]">
                     {content.map((content) => {
                         const youtube = content.link.includes("youtube.com");
                         const twitter = content.link.includes("twitter.com") || content.link.includes("x.com");
 
                         return (
-                            <Card className="w-96 h-[400px]" key={content.id}>
+                            <Card className="w-80 h-[400px]" key={content.id}>
                                 <CardHeader>
                                     <CardTitle className="flex justify-between items-center">
 
@@ -74,10 +70,6 @@ export function Dashboard() {
                             </Card>
                         )
                     })}
-
-                    {editing && (
-                        <AddContentDialog />
-                    )}
                 </div>
             )}
         </>

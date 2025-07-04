@@ -11,7 +11,7 @@ import { toast } from "sonner";
 // import { Textarea } from "../ui/textarea";
 // import { Badge } from "../ui/badge";
 
-export function AddContentDialog() {
+export function AddContentModal() {
 
   const form = useForm<z.infer<typeof contentSchema>>({
     resolver: zodResolver(contentSchema),
