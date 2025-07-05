@@ -211,6 +211,7 @@ app.put("/updateContent/:id", JwtAuth, async (req: Request, res: Response) => {
     const content = await prisma.content.findUnique({
         where: {
             id: req.params.id,
+            userId: req.userId
         }
     });
 
@@ -226,19 +227,26 @@ app.put("/updateContent/:id", JwtAuth, async (req: Request, res: Response) => {
         return;
     };
 
-    await prisma.content.update({
-        where: {
-            id: req.params.id,
-        },
-        data: {
-            title: result.data?.title,
-            link: result.data?.link,
-            tags: result.data?.tags,
-        }
-    })
-    res.status(200).json({ msg: "Content updated successsfully" })
-    return;
-})
+    try {
+        await prisma.content.update({
+            where: {
+                id: req.params.id,
+                userId: req.userId
+            },
+            data: {
+                title: result.data?.title,
+                link: result.data?.link,
+                tags: result.data?.tags,
+            }
+        })
+        res.status(200).json({ msg: "Content updated successsfully" })
+        return;
+    } catch (error) {
+        console.error("Error updating content:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
+});
 
 app.delete("/deleteContent/:id", JwtAuth, async (req: Request, res: Response) => {
 
@@ -251,25 +259,56 @@ app.delete("/deleteContent/:id", JwtAuth, async (req: Request, res: Response) =>
         return;
     };
 
-    const content = await prisma.content.findUnique({
-        where: {
-            id: req.params.id,
-        }
-    });
+    try {
+        const content = await prisma.content.findUnique({
+            where: {
+                id: req.params.id,
+                userId: req.userId
+            }
+        });
 
-    if (!content) {
-        res.status(400).json({ msg: "No such content availaible with this id" })
+        if (!content) {
+            res.status(400).json({ msg: "No such content availaible with this id" })
+            return;
+        };
+
+        await prisma.content.delete({
+            where: {
+                id: req.params.id,
+                userId: req.userId
+            }
+        });
+        res.status(200).json({ msg: "Content delete successsfully" })
         return;
-    };
+    } catch (error) {
+        console.error("Error deleting content:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
+});
 
-    await prisma.content.delete({
-        where: {
-            id: req.params.id,
-            userId: req.userId
+app.get("/link", JwtAuth, async (req: Request, res: Response) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.userId },
+            select: {
+                inviteCode: true
+            }
+        });
+
+        if (!user) {
+            res.status(404).json({ msg: "User not found" });
+            return;
         }
-    });
-    res.status(200).json({ msg: "Content delete successsfully" })
-    return;
+
+        res.status(200).json({ msg: "Link retrieved successfully", link: user.inviteCode });
+        return;
+
+    } catch (error) {
+        console.error("Error fetching user link:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
 });
 
 app.get("/invite/:id", async (req: Request, res: Response) => {
@@ -298,10 +337,8 @@ app.get("/invite/:id", async (req: Request, res: Response) => {
         }
     });
 
-    res.status(200).json({
-        content
-    })
-})
+    res.status(200).json({ content })
+});
 
 
 app.listen(3000, () => {

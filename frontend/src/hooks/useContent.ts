@@ -7,6 +7,7 @@ interface dataInterface {
     title: string,
     link: string,
     tags: string[],
+    createdAt: string
 }
 
 export function useContent() {

@@ -208,6 +208,7 @@ app.put("/updateContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0,
     const content = yield db_1.prisma.content.findUnique({
         where: {
             id: req.params.id,
+            userId: req.userId
         }
     });
     if (!content) {
@@ -224,6 +225,7 @@ app.put("/updateContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0,
     yield db_1.prisma.content.update({
         where: {
             id: req.params.id,
+            userId: req.userId
         },
         data: {
             title: (_a = result.data) === null || _a === void 0 ? void 0 : _a.title,
@@ -246,6 +248,7 @@ app.delete("/deleteContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void
     const content = yield db_1.prisma.content.findUnique({
         where: {
             id: req.params.id,
+            userId: req.userId
         }
     });
     if (!content) {
@@ -261,6 +264,27 @@ app.delete("/deleteContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void
     });
     res.status(200).json({ msg: "Content delete successsfully" });
     return;
+}));
+app.get("/link", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield db_1.prisma.user.findUnique({
+            where: { id: req.userId },
+            select: {
+                inviteCode: true
+            }
+        });
+        if (!user) {
+            res.status(404).json({ msg: "User not found" });
+            return;
+        }
+        res.status(200).json({ msg: "Link retrieved successfully", link: user.inviteCode });
+        return;
+    }
+    catch (error) {
+        console.error("Error fetching user link:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
 }));
 app.get("/invite/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const link = yield db_1.prisma.user.findUnique({

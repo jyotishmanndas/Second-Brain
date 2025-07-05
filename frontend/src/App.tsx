@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Layout } from "./components/Layout"
-import { SignInPage } from "./pages/SigninPage"
-import { SignUpPage } from "./pages/SignupPage"
-import { Dashboard } from "./pages/Dashboard"
+import { SignInPage } from "./pages/Signin-Page"
+import { SignUpPage } from "./pages/Signup-Page"
+import { Dashboard } from "./pages/Dashboard-Page"
+import { InvitePage } from "./pages/Invite-Page"
 import { Youtube } from "./pages/youtube"
-
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
 
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/invite/:id" element={<InvitePage />} />
       </Routes>
     </BrowserRouter>
   )

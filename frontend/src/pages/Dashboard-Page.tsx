@@ -19,6 +19,11 @@ export function Dashboard() {
         );
     };
 
+    const formatDate = (isoString: string): string => {
+        const date = new Date(isoString);
+        return date.toLocaleDateString("en-GB");
+    };
+
     return (
         <>
             {authenticated && (
@@ -63,9 +68,11 @@ export function Dashboard() {
                                             <a href={content.link.replace("x.com", "twitter.com")}></a>
                                         </blockquote>
                                     )}
-                                </CardContent>
-                                <CardFooter>
+
                                     #{content.tags}
+                                </CardContent>
+                                <CardFooter className="text-muted-foreground">
+                                    Added on {formatDate(content.createdAt)}
                                 </CardFooter>
                             </Card>
                         )
