@@ -222,19 +222,26 @@ app.put("/updateContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0,
         return;
     }
     ;
-    yield db_1.prisma.content.update({
-        where: {
-            id: req.params.id,
-            userId: req.userId
-        },
-        data: {
-            title: (_a = result.data) === null || _a === void 0 ? void 0 : _a.title,
-            link: (_b = result.data) === null || _b === void 0 ? void 0 : _b.link,
-            tags: (_c = result.data) === null || _c === void 0 ? void 0 : _c.tags,
-        }
-    });
-    res.status(200).json({ msg: "Content updated successsfully" });
-    return;
+    try {
+        yield db_1.prisma.content.update({
+            where: {
+                id: req.params.id,
+                userId: req.userId
+            },
+            data: {
+                title: (_a = result.data) === null || _a === void 0 ? void 0 : _a.title,
+                link: (_b = result.data) === null || _b === void 0 ? void 0 : _b.link,
+                tags: (_c = result.data) === null || _c === void 0 ? void 0 : _c.tags,
+            }
+        });
+        res.status(200).json({ msg: "Content updated successsfully" });
+        return;
+    }
+    catch (error) {
+        console.error("Error updating content:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
 }));
 app.delete("/deleteContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield db_1.prisma.user.findUnique({
@@ -245,25 +252,32 @@ app.delete("/deleteContent/:id", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void
         return;
     }
     ;
-    const content = yield db_1.prisma.content.findUnique({
-        where: {
-            id: req.params.id,
-            userId: req.userId
+    try {
+        const content = yield db_1.prisma.content.findUnique({
+            where: {
+                id: req.params.id,
+                userId: req.userId
+            }
+        });
+        if (!content) {
+            res.status(400).json({ msg: "No such content availaible with this id" });
+            return;
         }
-    });
-    if (!content) {
-        res.status(400).json({ msg: "No such content availaible with this id" });
+        ;
+        yield db_1.prisma.content.delete({
+            where: {
+                id: req.params.id,
+                userId: req.userId
+            }
+        });
+        res.status(200).json({ msg: "Content delete successsfully" });
         return;
     }
-    ;
-    yield db_1.prisma.content.delete({
-        where: {
-            id: req.params.id,
-            userId: req.userId
-        }
-    });
-    res.status(200).json({ msg: "Content delete successsfully" });
-    return;
+    catch (error) {
+        console.error("Error deleting content:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
 }));
 app.get("/link", jwtAuth_1.JwtAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -309,9 +323,7 @@ app.get("/invite/:id", (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
         }
     });
-    res.status(200).json({
-        content
-    });
+    res.status(200).json({ content });
 }));
 app.listen(3000, () => {
     console.log('Server is listening on the port 3000');

@@ -69,7 +69,7 @@ export function Dashboard() {
                                         </blockquote>
                                     )}
 
-                                    #{content.tags}
+                                    {/* #{content.tags} */}
                                 </CardContent>
                                 <CardFooter className="text-muted-foreground">
                                     Added on {formatDate(content.createdAt)}

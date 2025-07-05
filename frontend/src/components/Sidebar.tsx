@@ -28,7 +28,7 @@ export const Links: SidebarLinks[] = [
     {
         id: 2,
         name: "Tweets",
-        href: "/dashboard/tweet",
+        href: "/dashboard/tweets",
         icon: FaTwitter
     },
     {
