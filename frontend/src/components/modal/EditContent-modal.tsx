@@ -23,7 +23,7 @@ export function EditContentDialog({ id }: { id: string }) {
 
     async function onSubmit(values: z.infer<typeof contentSchema>) {
         try {
-            await axios.put(`http://localhost:3000/updateContent/${id}`, values, {
+            await axios.put(`http://localhost:3000/content/updateContent/${id}`, values, {
                 headers: {
                     Authorization: localStorage.getItem("token")
                 }

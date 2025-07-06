@@ -22,7 +22,7 @@ export function useContent() {
             navigate("/signin");
             return;
         };
-        axios.get("http://localhost:3000/allContent", {
+        axios.get("http://localhost:3000/content/allContent", {
             headers: {
                 Authorization: token
             }
@@ -35,4 +35,4 @@ export function useContent() {
     return {
         content
     }
-}
+};

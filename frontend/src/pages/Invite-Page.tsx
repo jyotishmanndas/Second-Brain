@@ -18,7 +18,6 @@ export function InvitePage() {
     const [data, setData] = useState<dataInterface[]>([])
     const { id } = useParams();
 
-
     const formatDate = (isoString: string): string => {
         const date = new Date(isoString);
         return date.toLocaleDateString("en-GB");
@@ -28,7 +27,7 @@ export function InvitePage() {
         axios.get(`http://localhost:3000/invite/${id}`)
             .then((res) => {
                 setData(res.data.content)
-            })
+            });
     }, [])
     return (
         <div className="min-h-screen w-full flex flex-wrap justify-start gap-3 pt-10 pl-20 pb-10 bg-[#eeeeef]">
@@ -80,4 +79,4 @@ export function InvitePage() {
             })}
         </div>
     )
-}
+};

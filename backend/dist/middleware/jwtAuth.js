@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtAuth = JwtAuth;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+;
 function JwtAuth(req, res, next) {
     const token = req.headers.authorization;
     if (!token) {
@@ -25,3 +26,4 @@ function JwtAuth(req, res, next) {
         res.status(401).json({ msg: "Permission denied" });
     }
 }
+;

@@ -7,7 +7,7 @@ declare global {
             userId?: string;
         }
     }
-}
+};
 
 export function JwtAuth(req: Request, res: Response, next: NextFunction) {
 
@@ -19,7 +19,7 @@ export function JwtAuth(req: Request, res: Response, next: NextFunction) {
         });
         return;
     };
-    
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: string };
 
@@ -30,4 +30,4 @@ export function JwtAuth(req: Request, res: Response, next: NextFunction) {
     } catch (error) {
         res.status(401).json({ msg: "Permission denied" })
     }
-}
+};

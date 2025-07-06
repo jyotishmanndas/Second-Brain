@@ -7,7 +7,7 @@ export function DeleteContentModal({ id }: { id: string }) {
 
     const onSubmit = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:3000/deleteContent/${id}`, {
+            await axios.delete(`http://localhost:3000/content/deleteContent/${id}`, {
                 headers: {
                     Authorization: localStorage.getItem("token")
                 }

@@ -11,9 +11,8 @@ export function InviteModal() {
   const [link, setlink] = useState("");
   const [copied, setCopied] = useState(false);
 
-
   useEffect(() => {
-    axios.get("http://localhost:3000/link", {
+    axios.get("http://localhost:3000/invite/link", {
       headers: {
         Authorization: localStorage.getItem("token")
       }
@@ -31,7 +30,7 @@ export function InviteModal() {
     setTimeout(()=>{
       setCopied(false)
     }, 2000)
-  }
+  };
 
   return (
     <Dialog>
