@@ -6,59 +6,54 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { useState } from "react";
-import { signUpSchema } from "@/lib/zod";
+import { profileUpdateSchema } from "@/lib/zod";
 import type { z } from "zod";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-export function SignUpForm() {
-    const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
 
-    const navigate = useNavigate();
-    const form = useForm<z.infer<typeof signUpSchema>>({
+export function ProfileUpdateForm() {
+    const [loading, setLoading] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const form = useForm<z.infer<typeof profileUpdateSchema>>({
         mode: "onChange",
-        resolver: zodResolver(signUpSchema),
+        resolver: zodResolver(profileUpdateSchema),
         defaultValues: {
             name: "",
-            email: "",
-            password: ""
+            newPassword: "",
+            confirmPassword: ""
         }
     });
+
     const { isValid } = form.formState;
 
-    async function onSubmit(values: z.infer<typeof signUpSchema>) {
+    async function onSubmit(values: z.infer<typeof profileUpdateSchema>) {
         try {
             setLoading(true);
-            const res = await axios.post("http://localhost:3000/signup", values);
-            const token = res.data.token;
-            if (token) {
-                localStorage.setItem("token", token);
-                form.reset();
-                toast.success("Account created successfully!");
-                navigate("/dashboard")
-            };
+            await axios.patch("http://localhost:3000/updateprofile", values, {
+                headers: {
+                    Authorization: localStorage.getItem("token")
+                }
+            });
+            form.reset();
+            toast.success("Profile updated successfully", {
+                position: "bottom-center"
+            });
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response?.status == 400) {
-                toast("Email already Registered", {
-                    description: "This email is already in use. Please try signing in or using a different email."
-                })
-            } else {
-                toast("Uh oh! Something went wrong.", {
-                    description: "There was a problem with your request.",
-                })
-            }
+            console.log(error);
         } finally {
             setLoading(false)
         };
     };
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-2xl">Create a new account</CardTitle>
+                <CardTitle className="text-2xl">Edit Profile</CardTitle>
                 <CardDescription>
-                    Enter your details below to create a new account
+                    Enter your details to update your profile
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -80,33 +75,42 @@ export function SignUpForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="email"
+                                name="newPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="jhondoe@example.com" {...field} />
-                                        </FormControl>
+                                        <FormLabel>New Password</FormLabel>
+                                        <div className="relative">
+                                            <FormControl>
+                                                <Input type={showNewPassword ? "text" : "password"} placeholder="******" {...field} />
+                                            </FormControl>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowNewPassword((prev) => !prev)}
+                                                className="absolute right-2 top-2 text-gray-500"
+                                            >
+                                                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="password"
+                                name="confirmPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>Confirm Password</FormLabel>
                                         <div className="relative">
                                             <FormControl>
-                                                <Input type={showPassword ? "text" : "password"} placeholder="******" {...field} />
+                                                <Input type={showConfirmPassword ? "text" : "password"} placeholder="******" {...field} />
                                             </FormControl>
                                             <button
                                                 type="button"
-                                                onClick={() => setShowPassword((prev) => !prev)}
+                                                onClick={() => setShowConfirmPassword((prev) => !prev)}
                                                 className="absolute right-2 top-2 text-gray-500"
                                             >
-                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                             </button>
                                         </div>
                                         <FormMessage />
@@ -118,15 +122,9 @@ export function SignUpForm() {
                             {loading && (
                                 <Loader className="w-4 h-4 animate-spin" />
                             )}
-                            Sign Up
+                            Update
                         </Button>
                     </form>
-                    <div className="mt-4 text-center text-sm">
-                        Already have an account?{" "}
-                        <a href="/signin" className="underline underline-offset-4">
-                            Sign in
-                        </a>
-                    </div>
                 </Form>
             </CardContent>
         </Card>

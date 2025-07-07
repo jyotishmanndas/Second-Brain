@@ -13,6 +13,7 @@ import { Edit } from "lucide-react";
 export function EditContentDialog({ id }: { id: string }) {
 
     const form = useForm<z.infer<typeof contentSchema>>({
+        mode: "onChange",
         resolver: zodResolver(contentSchema),
         defaultValues: {
             title: "",
@@ -20,6 +21,7 @@ export function EditContentDialog({ id }: { id: string }) {
             tags: []
         },
     });
+    const { isValid } = form.formState;
 
     async function onSubmit(values: z.infer<typeof contentSchema>) {
         try {
@@ -31,7 +33,6 @@ export function EditContentDialog({ id }: { id: string }) {
             form.reset();
             toast.success("post updated successfully");
             window.location.reload();
-
         } catch (error) {
             console.log(error);
         }
@@ -88,7 +89,7 @@ export function EditContentDialog({ id }: { id: string }) {
                                 )}
                             />
                         </div>
-                        <Button type="submit" className="flex ml-auto cursor-pointer">
+                        <Button disabled={!isValid} type="submit" className="flex ml-auto cursor-pointer">
                             Submit
                         </Button>
                     </form>

@@ -59,19 +59,39 @@ export function Sidebar() {
                     </SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 flex flex-col gap-2 px-2">
-                    {Links.map((link) => (
-                        <a
-                            key={link.id}
-                            href={link.href}
-                            className={cn(
-                                "flex items-center gap-5 text-xl text-[#262626] py-2 px-6 mt-1 rounded-md transition-all",
-                                location.pathname === link.href ? "bg-[#404040] text-white" : "hover:bg-[#d4d4d4] hover:text-[#262626]"
-                            )}
-                        >
-                            <link.icon className="size-7" />
-                            {link.name}
-                        </a>
-                    ))}
+                    {Links.map((link) => {
+                        if (link.name === "Logout") {
+                            return (
+                                <button
+                                    key={link.id}
+                                    onClick={() => {
+                                        localStorage.removeItem("token");
+                                        window.location.href = "/signin";
+                                    }}
+                                    className={cn(
+                                        "flex items-center gap-5 text-xl text-[#262626] py-2 px-6 mt-1 rounded-md transition-all w-full text-left bg-transparent border-none outline-none focus:ring-0 focus:outline-none cursor-pointer",
+                                        "hover:bg-[#d4d4d4]"
+                                    )}
+                                >
+                                    <link.icon className="size-7" />
+                                    {link.name}
+                                </button>
+                            )
+                        }
+                        return (
+                            <a
+                                key={link.id}
+                                href={link.href}
+                                className={cn(
+                                    "flex items-center gap-5 text-xl text-[#262626] py-2 px-6 mt-1 rounded-md transition-all",
+                                    location.pathname === link.href ? "bg-[#404040] text-white" : "hover:bg-[#d4d4d4] hover:text-[#262626]"
+                                )}
+                            >
+                                <link.icon className="size-7" />
+                                {link.name}
+                            </a>
+                        )
+                    })}
                 </div>
             </SheetContent>
         </Sheet>

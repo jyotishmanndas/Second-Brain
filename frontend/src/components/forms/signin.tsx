@@ -1,4 +1,4 @@
-import { Loader } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
@@ -14,15 +14,19 @@ import { toast } from "sonner";
 
 export function SignInForm() {
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
     const form = useForm<z.infer<typeof signInschema>>({
+        mode: "onChange",
         resolver: zodResolver(signInschema),
         defaultValues: {
             email: "",
             password: ""
         }
     });
+    const { isValid } = form.formState;
+
     async function onSubmit(values: z.infer<typeof signInschema>) {
         try {
             setLoading(true);
@@ -78,15 +82,24 @@ export function SignInForm() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
+                                        <div className="relative">
                                         <FormControl>
-                                            <Input placeholder="******" {...field} />
+                                            <Input type={showPassword ? "text" : "password"} placeholder="******" {...field} />
                                         </FormControl>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword((prev) => !prev)}
+                                            className="absolute right-2 top-2 text-gray-500"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                        </div>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <Button className="w-full cursor-pointer" type="submit">
+                        <Button disabled={!isValid} className="w-full cursor-pointer" type="submit">
                             {loading && (
                                 <Loader className="w-4 h-4 animate-spin" />
                             )}

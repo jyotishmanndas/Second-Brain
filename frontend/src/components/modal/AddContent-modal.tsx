@@ -14,6 +14,7 @@ import { toast } from "sonner";
 export function AddContentModal() {
 
   const form = useForm<z.infer<typeof contentSchema>>({
+    mode: "onChange",
     resolver: zodResolver(contentSchema),
     defaultValues: {
       title: "",
@@ -21,6 +22,7 @@ export function AddContentModal() {
       tags: []
     },
   });
+  const { isValid } = form.formState;
 
   async function onSubmit(values: z.infer<typeof contentSchema>) {
     try {
@@ -32,7 +34,6 @@ export function AddContentModal() {
       form.reset();
       toast.success("post create successfully");
       window.location.reload();
-
     } catch (error) {
       console.log(error);
     }
@@ -96,7 +97,7 @@ export function AddContentModal() {
                 )}
               />
             </div>
-            <Button type="submit" className="flex ml-auto cursor-pointer">
+            <Button disabled={!isValid} type="submit" className="flex ml-auto cursor-pointer">
               Submit
             </Button>
           </form>

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { signInschema, signUpSchema } from "../zod";
+import { signInschema, signUpSchema, profileUpdateSchema } from "../zod";
 import { prisma } from "../lib/db";
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
@@ -103,6 +103,67 @@ export const userValidate = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error("Error during auth validation:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
+};
+
+export const getUserProfile = async (req: Request, res: Response) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+            }
+        });
+
+        if (!user) {
+            res.status(404).json({ msg: "User not found" });
+            return;
+        }
+
+        res.status(200).json({ user });
+        return;
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.status(500).json({ msg: "Internal server error" });
+        return;
+    }
+};
+
+export const updateUserProfile = async (req: Request, res: Response) => {
+    const user = await prisma.user.findUnique({
+        where: { id: req.userId }
+    });
+
+    if (!user) {
+        res.status(400).json({ msg: "User not found" });
+        return;
+    };
+
+    const result = profileUpdateSchema.safeParse(req.body);
+    if (!result.success) {
+        res.status(400).json({ msg: "Invalid input", errors: result.error.errors });
+        return;
+    };
+
+    const hashedpassword = await bcrypt.hash(result.data.confirmPassword, 12)
+    try {
+        const updatedUser = await prisma.user.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                name: result.data.name,
+                password: hashedpassword
+            }
+        });
+        res.status(200).json({ msg: "Profile updated successfully", user: updatedUser });
+        return;
+    } catch (error) {
+        console.error("Error updating user profile:", error);
         res.status(500).json({ msg: "Internal server error" });
         return;
     }

@@ -6,6 +6,7 @@ import { Dashboard } from "./pages/Dashboard-Page"
 import { InvitePage } from "./pages/Invite-Page"
 import { Youtube } from "./pages/youtube"
 import { TweetsPage } from "./pages/Tweets-Page"
+import { ProfilePage } from "./pages/Profile-Page"
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route index element={<Dashboard />}></Route>
           <Route path="youtube" element={<Youtube />}></Route>
           <Route path="tweets" element={<TweetsPage />}></Route>
+          <Route path="profile" element={<ProfilePage />}></Route>
         </Route>
 
         <Route path="/signin" element={<SignInPage />} />
