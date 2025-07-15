@@ -45,25 +45,26 @@ Second Brain is a productivity web application that helps users capture and mana
 ### Client
 
 ```
-brainly-client/
+frontend/
 ├── public/
 ├── src/
-│   ├── components/   # UI components (Navbar, Sidebar, UI, etc.)
+│   ├── components/   # UI components (Navbar, Sidebar, UI, forms, modal)
 │   ├── lib/          # Utility functions
-│   ├── pages/        # Page components (Dashboard, Tweets, Videos, etc.)
-│   ├── store/        # State management (Recoil atoms)
+│   ├── hooks/          # Custom hooks
+│   ├── pages/        # Page components (Dashboard, Tweets, Videos, Invite)
+
 ```
 
 ### Server
 
 ```
-brainly-server/
-├── app/
-│   ├── controller/   # Route controllers
-│   ├── database/     # DB connection
-│   ├── jwt/          # JWT utilities
-│   ├── model/        # Mongoose models
+backend/
+├── prisma/           # DB connection
+├── src/
+│   ├── controllers/   # Route controllers    
+│   ├── middleware/    # JWT utilities
 │   ├── routes/       # Express routes
+│   ├── zod.ts          # validation
 ```
 
 ---
@@ -85,8 +86,15 @@ brainly-server/
    cd Second-Brain
    
    docker run -d \
-  --name second-brain \
+ ```
+ --name second-brain \
   -p 5432:5432 \
   -e POSTGRES_PASSWORD= password \
   postgres
+```
+2. Create `.env` file in the backend directory:
+```
+DATABASE_URL="postgresql://postgres:password@5432/postgres"
+JWT_SECRET="your_secret_key"
+```
 
