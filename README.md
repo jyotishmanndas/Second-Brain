@@ -85,8 +85,8 @@ backend/
    git clone https://github.com/jyotishmanndas/Second-Brain.git
    cd Second-Brain
    
-   docker run -d \
  ```
+ docker run -d \
  --name second-brain \
   -p 5432:5432 \
   -e POSTGRES_PASSWORD= password \
