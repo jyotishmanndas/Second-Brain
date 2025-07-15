@@ -42,23 +42,31 @@ Second Brain is a productivity web application that helps users capture and mana
 
 ## 🗂️ Project Structure
 
-second-brain/
-├── frontend/ # React Client (Vite-based)
-│ ├── public/
-│ └── src/
-│ ├── components/ # UI components (Navbar, Sidebar, Forms, etc.)
-│ ├── lib/ # Utility functions
-│ ├── hooks/ # Custom React hooks
-│ ├── pages/ # Page components (Dashboard, Tweets, Videos, etc.)
-│
-├── backend/ # Node.js Server (Express)
-│ ├── prisma/ # Prisma DB Client Setup
-│ └── src/
-│ ├── controllers/ # Route logic and controller functions
-│ ├── middleware/ # JWT utilities, authentication checks
-│ ├── routes/ # Express route definitions
-│ ├── zod/ # Zod validation schemas
+### Client
 
+```
+brainly-client/
+├── public/
+├── src/
+│   ├── components/   # UI components (Navbar, Sidebar, UI, etc.)
+│   ├── lib/          # Utility functions
+│   ├── pages/        # Page components (Dashboard, Tweets, Videos, etc.)
+│   ├── store/        # State management (Recoil atoms)
+```
+
+### Server
+
+```
+brainly-server/
+├── app/
+│   ├── controller/   # Route controllers
+│   ├── database/     # DB connection
+│   ├── jwt/          # JWT utilities
+│   ├── model/        # Mongoose models
+│   ├── routes/       # Express routes
+```
+
+---
 ## 🚀 Getting Started
 
 ### Prerequisites
