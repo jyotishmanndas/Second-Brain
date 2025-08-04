@@ -24,10 +24,9 @@ export function InviteModal() {
 
   const inviteUrl = `http://localhost:5173/invite/${link}`
   const onCopy = () => {
-    navigator.clipboard.writeText(inviteUrl);
-
     setCopied(true)
-    setTimeout(()=>{
+    navigator.clipboard.writeText(inviteUrl);
+    setTimeout(() => {
       setCopied(false)
     }, 2000)
   };
