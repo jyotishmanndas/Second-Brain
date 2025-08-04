@@ -1,5 +1,6 @@
 import { DeleteContentModal } from "@/components/modal/DeleteContent-modal";
 import { EditContentDialog } from "@/components/modal/EditContent-modal";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useContent } from "@/hooks/useContent";
@@ -36,13 +37,12 @@ export function Dashboard() {
                             <Card className="w-80 h-[400px]" key={content.id}>
                                 <CardHeader>
                                     <CardTitle className="flex justify-between items-center">
-
                                         <div className="flex">
                                             {youtube && <FaYoutube className="w-4 h-4" />}
                                             {twitter && <FaTwitter className="w-4 h-4" />}
                                         </div>
 
-                                        <span className="text-center">{content.title}</span>
+                                        <span className="text-center truncate">{content.title}</span>
                                         <div className="flex gap-3">
                                             <EditContentDialog id={content.id} />
                                             <DeleteContentModal id={content.id} />
@@ -68,11 +68,18 @@ export function Dashboard() {
                                             <a href={content.link.replace("x.com", "twitter.com")}></a>
                                         </blockquote>
                                     )}
-
-                                    {/* #{content.tags} */}
                                 </CardContent>
-                                <CardFooter className="text-muted-foreground">
-                                    Added on {formatDate(content.createdAt)}
+                                <CardFooter className="text-muted-foreground flex flex-col items-start">
+                                    <div className="flex items-center">
+                                        {content.tags.map((tag, index) => (
+                                            <Badge key={index} className="m-1">
+                                                #{tag}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                    <div className="text-sm mt-3">
+                                        Added on {formatDate(content.createdAt)}
+                                    </div>
                                 </CardFooter>
                             </Card>
                         )

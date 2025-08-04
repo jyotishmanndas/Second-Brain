@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaYoutube } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
+import { Badge } from "@/components/ui/badge";
 
 interface dataInterface {
     id: string,
@@ -38,15 +39,13 @@ export function InvitePage() {
                 return (
                     <Card className="w-80 h-[400px]" key={content.id}>
                         <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-
-                                <div className="flex">
+                            <CardTitle className="flex items-center">
+                                <div className="flex items-center">
                                     {youtube && <FaYoutube className="w-4 h-4" />}
                                     {twitter && <FaTwitter className="w-4 h-4" />}
                                 </div>
 
-                                <span className="text-center">{content.title}</span>
-
+                                <span className="text-center truncate">{content.title}</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="h-60 overflow-y-auto">
@@ -68,11 +67,18 @@ export function InvitePage() {
                                     <a href={content.link.replace("x.com", "twitter.com")}></a>
                                 </blockquote>
                             )}
-
-                            #{content.tags}
                         </CardContent>
-                        <CardFooter className="text-muted-foreground">
-                            Added on {formatDate(content.createdAt)}
+                        <CardFooter className="text-muted-foreground flex flex-col items-start">
+                            <div className="flex items-center">
+                                {content.tags.map((tag, index) => (
+                                    <Badge key={index} className="m-1">
+                                        #{tag}
+                                    </Badge>
+                                ))}
+                            </div>
+                            <div className="text-sm mt-3">
+                                Added on {formatDate(content.createdAt)}
+                            </div>
                         </CardFooter>
                     </Card>
                 )

@@ -11,9 +11,7 @@ interface dataInterface {
 }
 
 export function useContent() {
-
     const [content, setContent] = useState<dataInterface[]>([]);
-
     const navigate = useNavigate();
 
     useEffect(() => {

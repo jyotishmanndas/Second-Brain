@@ -24,7 +24,7 @@ export const signInschema = z.object({
 });
 
 export const contentSchema = z.object({
-    title: z.string().min(1, { message: "Title is required" }),
+    title: z.string().min(1).max(20, { message: "Title is required" }),
     link: z.string().url().min(1, { message: "Invalid url" }),
     tags: z.array(z.string()).min(1, { message: "Atleat one tag is required" })
 })
