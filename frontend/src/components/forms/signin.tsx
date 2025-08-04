@@ -83,16 +83,16 @@ export function SignInForm() {
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
                                         <div className="relative">
-                                        <FormControl>
-                                            <Input type={showPassword ? "text" : "password"} placeholder="******" {...field} />
-                                        </FormControl>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword((prev) => !prev)}
-                                            className="absolute right-2 top-2 text-gray-500"
-                                        >
-                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                        </button>
+                                            <FormControl>
+                                                <Input type={showPassword ? "text" : "password"} placeholder="******" {...field} />
+                                            </FormControl>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                                className="absolute right-2 top-2 text-gray-500"
+                                            >
+                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
                                         </div>
                                         <FormMessage />
                                     </FormItem>

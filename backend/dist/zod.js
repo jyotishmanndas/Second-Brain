@@ -24,7 +24,7 @@ exports.signInschema = zod_1.z.object({
         .regex(/[@$!%*?&]/, { message: 'Password must contain at least one special character' }),
 });
 exports.contentSchema = zod_1.z.object({
-    title: zod_1.z.string().min(1, { message: "Title is required" }),
+    title: zod_1.z.string().min(1).max(20, { message: "Title is required" }),
     link: zod_1.z.string().url().min(1, { message: "Invalid url" }),
     tags: zod_1.z.array(zod_1.z.string()).min(1, { message: "Atleat one tag is required" })
 });
