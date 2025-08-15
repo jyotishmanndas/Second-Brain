@@ -39,13 +39,13 @@ export function InvitePage() {
                 return (
                     <Card className="w-80 h-[400px]" key={content.id}>
                         <CardHeader>
-                            <CardTitle className="flex items-center">
+                            <CardTitle className="flex item-center">
                                 <div className="flex items-center">
                                     {youtube && <FaYoutube className="w-4 h-4" />}
                                     {twitter && <FaTwitter className="w-4 h-4" />}
                                 </div>
 
-                                <span className="text-center truncate">{content.title}</span>
+                                <span className="mx-auto truncate">{content.title}</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="h-60 overflow-y-auto">
